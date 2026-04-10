@@ -37,6 +37,10 @@
             </div>
             <div class="card-text">
 Rs. {{product.price}}            </div>
+
+              <a href="/{{product.id}}" class="btn btn-warning">View</a>
+              <a class="btn btn-warning">Add to cart</a>
+
             </div>
           </div>
         </div>
@@ -65,11 +69,6 @@ Rs. {{product.price}}            </div>
     </div>
     </div>
     </div>
+    
 </body>
 </html>
-
-
-
-{% for product in product_objects %}
- {{product.title}}
-{% endfor %}
