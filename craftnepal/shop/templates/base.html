@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CraftNepal</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+
+  <body class="bg-gray-100">
+    <!-- NAVBAR -->
+    {% include "components/navbar.html" %}
+
+    <!-- PAGE CONTENT -->
+    {% block content %}{% endblock %}
+
+    <!-- CART DRAWER -->
+    <div
+      id="cartDrawer"
+      class="fixed top-0 right-0 w-3/4 sm:w-1/2 md:w-[30rem] h-full bg-white shadow-lg transform translate-x-full transition-transform duration-300 flex flex-col z-50"
+    >
+      <!-- Close -->
+      <div class="flex justify-end p-4">
+        <button onclick="toggleCart()">✖</button>
+      </div>
+
+      <!-- Content -->
+      <div class="flex-grow p-4 overflow-auto">
+        <h2 class="text-xl font-semibold mb-4">Your Cart</h2>
+
+        <div id="cartItems"></div>
+
+        <p id="emptyCartText" class="text-gray-600 hidden">
+          Your cart is empty.
+        </p>
+      </div>
+
+      <!-- Checkout -->
+      <div class="p-4 border-t">
+        <button
+          onclick="goToCheckout()"
+          class="w-full bg-black text-white py-3 rounded-lg hover:bg-gray-800"
+        >
+          Checkout
+        </button>
+      </div>
+    </div>
+    {% include "components/footer.html" %}
+    <!-- JS -->
+    <script>
+      function getCartTotalQuantity(cart) {
+        let totalQty = 0;
+        for (let id in cart) {
+          let item = cart[id];
+          if (Array.isArray(item) && item.length >= 1) {
+            totalQty += Number(item[0]) || 0;
+          }
+        }
+        return totalQty;
+      }
+
+      function toggleCart() {
+        document
+          .getElementById("cartDrawer")
+          .classList.toggle("translate-x-full");
+      }
+
+      function loadCart() {
+        let cart = JSON.parse(localStorage.getItem("cart")) || {};
+        let cartItemsDiv = document.getElementById("cartItems");
+        let emptyText = document.getElementById("emptyCartText");
+
+        if (!cartItemsDiv || !emptyText) {
+          console.error("Cart elements not found");
+          return;
+        }
+
+        cartItemsDiv.innerHTML = "";
+        
+        // Normalize old format cart data to: [qty, name, image, unitPrice, totalPrice]
+        let validItems = 0;
+        for (let id in cart) {
+          const item = cart[id];
+          if (!Array.isArray(item)) {
+            delete cart[id];
+            continue;
+          }
+
+          if (item.length === 3) {
+            const qty = Number(item[0]) || 1;
+            const name = item[1] || "Product";
+            const total = Number(item[2]) || 0;
+            const unit = qty > 0 ? total / qty : total;
+            cart[id] = [qty, name, "https://via.placeholder.com/80", unit, total];
+            validItems++;
+            continue;
+          }
+
+          if (item.length >= 5) {
+            validItems++;
+          } else {
+            delete cart[id];
+          }
+        }
+
+        if (validItems === 0) {
+          // Clear invalid cart
+          localStorage.removeItem("cart");
+          cart = {};
+        }
+
+        if (Object.keys(cart).length === 0) {
+          emptyText.classList.remove("hidden");
+          emptyText.style.display = "block";
+          console.log("Cart is empty");
+        } else {
+          emptyText.classList.add("hidden");
+          emptyText.style.display = "none";
+
+          for (let id in cart) {
+            let item = cart[id]; // [qty, name, image, unitPrice, totalPrice]
+            if (!item || item.length < 5) continue;
+
+            let qty = item[0];
+            let name = item[1];
+            let image = item[2] || "https://via.placeholder.com/80";
+            let unitPrice = item[3];
+            let totalPrice = item[4];
+
+            cartItemsDiv.innerHTML += `
+                <div class="flex gap-3 py-4 border-b">
+                    <div class="w-20 h-20 flex-shrink-0">
+                        <img src="${image}" alt="${name}" class="w-full h-full object-cover rounded" onerror="this.src='https://via.placeholder.com/80'">
+                    </div>
+                    
+                    <div class="flex-grow">
+                        <h3 class="font-medium text-sm line-clamp-2">${name}</h3>
+                        <p class="text-xs text-gray-600 mt-1">Rs. ${unitPrice}</p>
+
+                        <div class="flex items-center gap-2 mt-2">
+                            <button onclick="updateQty('${id}', -1)"
+                                class="border border-gray-300 px-2 py-1 text-xs rounded hover:bg-gray-100">−</button>
+
+                            <span class="text-sm font-medium w-6 text-center">${qty}</span>
+
+                            <button onclick="updateQty('${id}', 1)"
+                                class="border border-gray-300 px-2 py-1 text-xs rounded hover:bg-gray-100">+</button>
+                        </div>
+                    </div>
+
+                    <div class="text-right flex flex-col justify-between">
+                        <div>
+                            <p class="font-semibold text-sm">Rs. ${totalPrice.toFixed(2)}</p>
+                        </div>
+
+                        <button onclick="removeItem('${id}')"
+                            class="text-red-500 text-xs hover:text-red-700 font-medium">
+                            Remove
+                        </button>
+                    </div>
+                </div>
+            `;
+          }
+        }
+
+        let cartCount = document.getElementById("cart-count");
+        if (cartCount) {
+          cartCount.innerText = getCartTotalQuantity(cart);
+        }
+        
+        // Save cleaned cart back
+        localStorage.setItem("cart", JSON.stringify(cart));
+      }
+
+      function updateQty(id, change) {
+        let cart = JSON.parse(localStorage.getItem("cart")) || {};
+
+        if (!cart[id]) return;
+
+        let item = cart[id];
+        if (!item || item.length < 5) return;
+
+        let unitPrice = item[3];
+        let currentQty = item[0];
+
+        item[0] = currentQty + change;
+
+        if (item[0] <= 0) {
+          delete cart[id];
+        } else {
+          item[4] = item[0] * unitPrice;
+        }
+
+        localStorage.setItem("cart", JSON.stringify(cart));
+        loadCart();
+      }
+
+      function removeItem(id) {
+        let cart = JSON.parse(localStorage.getItem("cart")) || {};
+        delete cart[id];
+        localStorage.setItem("cart", JSON.stringify(cart));
+        loadCart();
+      }
+
+      function goToCheckout() {
+        window.location.href = "/checkout";
+      }
+
+      document.addEventListener("DOMContentLoaded", function() {
+        console.log("DOM loaded, calling loadCart");
+        loadCart();
+        
+        // Add to cart functionality using event delegation
+        document.body.addEventListener("click", function(e) {
+          if (!e.target.classList.contains("add-to-cart")) return;
+          
+          e.preventDefault();
+          e.stopPropagation();
+
+          var item_id = e.target.dataset.id.toString();
+          var item_name = e.target.dataset.name;
+          var item_price = parseFloat(e.target.dataset.price);
+          var item_image = e.target.dataset.image || "https://via.placeholder.com/80";
+
+          console.log("Adding to cart:", { item_id, item_name, item_price, item_image });
+
+          let cart = JSON.parse(localStorage.getItem("cart")) || {};
+
+          if (cart[item_id] != undefined) {
+            // Item already in cart, increase quantity
+            let quantity = cart[item_id][0] + 1;
+            cart[item_id][0] = quantity;
+            cart[item_id][4] = quantity * item_price; // update total price
+          } else {
+            // New item, add to cart: [quantity, name, image, unitPrice, totalPrice]
+            cart[item_id] = [1, item_name, item_image, item_price, item_price];
+          }
+
+          console.log("Cart updated:", cart);
+          localStorage.setItem("cart", JSON.stringify(cart));
+          loadCart();
+
+          // Show success message
+          e.target.textContent = "Added!";
+          setTimeout(() => {
+            e.target.textContent = "Add";
+          }, 1500);
+        });
+      });
+    </script>
+  </body>
+</html>

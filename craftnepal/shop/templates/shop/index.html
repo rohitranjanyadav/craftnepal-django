@@ -1,170 +1,183 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
-<script src="https://code.jquery.com/jquery-4.0.0.js" integrity="sha256-9fsHeVnKBvqh3FB2HYu7g2xseAZ5MlN6Kz/qnkASV8U=" crossorigin="anonymous"></script>    
-
-<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js" integrity="sha384-+sLIOodYLS7CIrQpBjl+C7nPvqq+FbNUBDunl/OZv93DB7Ln/533i8e/mZXLi/P+" crossorigin="anonymous"></script>
-
-<script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct"
-      crossorigin="anonymous"
-    ></script>
-
-<link rel="stylesheet" href="{% static 'shop/style.css' %}">
-    <title>Page Title</title>
-</head>
-<body>
-    <div class="container">
-
-      <div class="row">
-        <div class="col-md-12">
-          <nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand" href="#">Navbar</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <div class="collapse navbar-collapse" id="navbarNav">
-    <ul class="navbar-nav">
-      <li class="nav-item active">
-        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">Features</a>
-      </li>
-      <li class="nav-item">
-        <button data-html="true" id="cart" type="button" class="btn btn-secondary" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Bottom popover">
-  Cart(0)
-</button>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link disabled" href="#">Disabled</a>
-      </li>
-    </ul>
+{% extends "base.html" %} {% load static %} {% block content %}
+<!-- Hero Section -->
+<section
+  id="heroSection"
+  class="relative w-full h-screen bg-gray-900 bg-cover bg-center bg-no-repeat flex items-center justify-center transition-all duration-700"
+>
+  <div class="absolute inset-0 bg-black/45"></div>
+  <div class="relative z-10 text-center text-white px-4">
+    <h1 class="text-5xl font-bold mb-4">Welcome to CraftNepal</h1>
+    <p class="text-xl text-gray-300 mb-8">
+      Discover authentic Nepalese crafts and products
+    </p>
+    <a
+      href="#products"
+      class="inline-block bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-8 rounded-lg transition"
+      >Shop Now</a
+    >
   </div>
-</nav>
-        </div>
-      </div>
+</section>
 
-    <div class="row">
-    <div class="col-md-12">
-    <form class="card card-sm">
-    <f class="card-body row no-gutters align-items-center">
-    <div class="col">
-    <input type="search" name="item_name" placeholder="Search for products" class="form-control form-control-borderless">
-    <div class="col-auto">
-    <button class="btn btn-success" type="submit">Search</button>
+<!-- Gender Collection Section -->
+<section class="py-16 bg-gray-50">
+  <div class="max-w-7xl mx-auto px-4">
+    <h2 class="text-4xl font-bold text-center mb-12">Collections</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {% for category in category_objects %}
+        <a
+          href="/?category={{ category.category_name|urlencode }}"
+          class="group overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition bg-white"
+        >
+          <div class="grid grid-cols-2 gap-1 p-1 bg-gray-100">
+            {% for product in category.product_set.all|slice:":3" %}
+              <div class="{% if forloop.first %}col-span-2 h-44{% else %}h-28{% endif %}">
+                <img
+                  src="{{ product.image }}"
+                  alt="{{ product.title }}"
+                  class="w-full h-full object-cover rounded-sm group-hover:scale-[1.02] transition"
+                />
+              </div>
+            {% endfor %}
+          </div>
+          <div class="p-5 text-center">
+            <h3 class="text-xl font-bold text-gray-800">{{ category.category_name }}</h3>
+            <p class="text-gray-600 mt-2">Explore this collection</p>
+          </div>
+        </a>
+      {% empty %}
+        <p class="text-center col-span-full text-gray-600">No categories found.</p>
+      {% endfor %}
     </div>
-    </div>
-    </form>
-    </form>
-    </div>
-    </div>
-      <div class="row">
+  </div>
+</section>
+
+<!-- Featured Collection Section -->
+<section class="py-16 bg-gray-50">
+  <div class="max-w-7xl mx-auto px-4">
+    <h2 class="text-4xl font-bold text-center mb-12">Shop Now</h2>
+    <div class="bg-white rounded-lg shadow-lg p-8 text-center">
+      {% if product_objects %}
+      <div
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 px-6 py-6"
+      >
         {% for product in product_objects %}
-        <div class="col-md-3">
-          <div class="card">
-            <img src="{{product.image}}" class="card-img-top"/>
-            <div class="card-body">
-            <div id="nm{{product.id}}" class="card-title">{{product.title}}</div>
-            <div id="price{{product.id}}" class="card-text">{{product.price}}</div>
+        <a href="/{{ product.id }}" class="block">
+          <div
+            class="bg-white p-4 rounded-lg shadow hover:shadow-lg transition"
+          >
+            <!-- Image -->
+            <div class="w-full h-64 mb-4">
+              <img
+                src="{{ product.image }}"
+                alt="{{ product.title }}"
+                class="w-full h-full object-cover rounded-lg"
+              />
+            </div>
 
-              <a href="/{{product.id}}" class="btn btn-warning">View</a>
-              <button id="{{product.id}}" class="btn atc btn-warning">Add to cart</button>
+            <!-- Title -->
+            <h3 class="text-sm mb-2 font-medium">{{ product.title }}</h3>
 
+            <!-- Price -->
+            <p class="text-gray-500 font-medium text-sm">
+              Rs. {{ product.price }}
+            </p>
+
+            <!-- Buttons -->
+            <div class="mt-3 flex justify-between items-center">
+              <span class="bg-black text-yellow-600 text-sm px-3 py-1 rounded"
+                >View</span
+              >
+
+              <button
+                class="bg-black text-white px-3 py-1 text-sm rounded add-to-cart"
+                data-id="{{ product.id }}"
+                data-name="{{ product.title }}"
+                data-price="{{ product.price }}"
+                data-image="{{ product.image }}"
+              >
+                Add
+              </button>
             </div>
           </div>
-        </div>
+        </a>
         {% endfor %}
       </div>
-      <div class="row">
-      <div class="col-md-3 offset-md-4">
-      <ul class="pagination">
-      {% if product_objects.has_previous %}
-      
-      <li class="page-item">
-      <a class="page-link" href="?page={{ product_objects.previous_page_number }}">Previous</a>
-      </li>
+      {% else %}
+      <p class="text-center py-10">No products found.</p>
       {% endif %}
-
-<li class="page-item">
-      <a class="page-link" href="?page={{ number }}">Current</a>
-      </li>
-
-      {% if product_objects.has_next %}
-      <li class="page-item">
-      <a class="page-link" href="?page={{ product_objects.next_page_number }}">Next</a>
-      </li>
-      {% endif %}
-      </ul>
     </div>
+  </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-16 bg-white">
+  <div class="max-w-7xl mx-auto px-4">
+    <h2 class="text-4xl font-bold text-center mb-12">Why Choose Us</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="text-center">
+        <div class="text-5xl mb-4">🚚</div>
+        <h3 class="text-xl font-bold text-gray-800 mb-2">Fast Delivery</h3>
+        <p class="text-gray-600">
+          Quick and reliable shipping to your doorstep
+        </p>
+      </div>
+      <div class="text-center">
+        <div class="text-5xl mb-4">💯</div>
+        <h3 class="text-xl font-bold text-gray-800 mb-2">Authentic Products</h3>
+        <p class="text-gray-600">100% genuine Nepalese crafts and products</p>
+      </div>
+      <div class="text-center">
+        <div class="text-5xl mb-4">💬</div>
+        <h3 class="text-xl font-bold text-gray-800 mb-2">24/7 Support</h3>
+        <p class="text-gray-600">Always here to help with any questions</p>
+      </div>
     </div>
-    </div>
-    
-</body>
+  </div>
+</section>
 
-<script type="text/javascript">
-  if(localStorage.getItem('cart')==null){
-    var cart = {};
-  }else{
-    cart = JSON.parse(localStorage.getItem('cart'));
-  }
+<script src="https://cdn.tailwindcss.com"></script>
+{{ hero_images|json_script:"hero-images-data" }}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const heroSection = document.getElementById("heroSection");
+    const heroDataNode = document.getElementById("hero-images-data");
+    if (!heroSection || !heroDataNode) return;
 
-  $(document).on('click','.atc',function(){
-    
-    var item_id = this.id.toString()
-
-    if(cart[item_id]!=undefined){
-      quantity = cart[item_id][0]+1
-      cart[item_id][0] = quantity
-      cart[item_id][2]=cart[item_id][2]+parseFloat(document.getElementById("price"+item_id).innerHTML)
-    }else{
-      quantity = 1
-      price = parseFloat(document.getElementById("price"+item_id).innerHTML)
-      name=document.getElementById("nm"+item_id).innerHTML
-      cart[item_id] = [quantity,name,price]
-
+    let heroImages = [];
+    try {
+      heroImages = JSON.parse(heroDataNode.textContent);
+    } catch (e) {
+      heroImages = [];
     }
 
-    console.log(cart)
-    localStorage.setItem('cart',JSON.stringify(cart))
+    if (!Array.isArray(heroImages) || heroImages.length === 0) {
+      heroSection.style.backgroundImage =
+        "linear-gradient(90deg, rgb(17 24 39), rgb(31 41 55), rgb(0 0 0))";
+      return;
+    }
 
-    document.getElementById("cart").innerHTML = "Cart("+Object.keys(cart).length+")"
+    let currentIndex = Math.floor(Math.random() * heroImages.length);
 
-    
-  })
+    function setHeroBackground(index) {
+      const imageUrl = heroImages[index];
+      heroSection.style.backgroundImage = `url('${imageUrl}')`;
+    }
 
- 
+    function getNextIndex() {
+      if (heroImages.length === 1) return 0;
+      let next = currentIndex;
+      while (next === currentIndex) {
+        next = Math.floor(Math.random() * heroImages.length);
+      }
+      return next;
+    }
 
+    setHeroBackground(currentIndex);
 
-DisplayCart(cart)
-function DisplayCart(cart){
-  var cartString=""
-  cartString+="<h5>This is your cart</h5>"
-
-  var cartIndex = 1;
-
-  let cartObject = JSON.parse(localStorage.getItem('cart'))
-
-  for(item in cartObject){
-    console.log(cartObject[item][0])
-    console.log(cartObject[item][1])
-    cartString+=cartObject[item][1]+" Qty: "+cartObject[item][0] +"</br>"
-  }
-
-  cartString += "<a href='/checkout' class='btn btn-warning'>Checkout</a>";
-
-  document.getElementById("cart").setAttribute('data-content',cartString)
-  $('[data-toggle="popover"]').popover();
-}
-
+    setInterval(function () {
+      currentIndex = getNextIndex();
+      setHeroBackground(currentIndex);
+    }, 3500);
+  });
 </script>
-
-</html>
+{% endblock %}
