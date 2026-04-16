@@ -33,7 +33,7 @@ def addproduct(request):
 
 def categorylist(request):
     category = Category.objects.all()
-    return render(request, "admins/category.html", {"category": category})
+    return render(request, "admins/categorylist.html", {"category": category})
 
 
 def addcategory(request):

@@ -130,7 +130,7 @@
             <ul id="dropdown-example1" class="hidden py-2 space-y-2">
               <li>
                 <a
-                  href="#"
+                  href="{% url 'addproduct' %}"
                   class="pl-10 flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group"
                   >Add Product</a
                 >
@@ -194,14 +194,14 @@
             <ul id="dropdown-example" class="hidden py-2 space-y-2">
               <li>
                 <a
-                  href="#"
+                  href="{% url 'addcategory' %}"
                   class="pl-10 flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group"
                   >Add Category</a
                 >
               </li>
               <li>
                 <a
-                  href="#"
+                  href="{% url 'categorylist' %}"
                   class="pl-10 flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group"
                   >Category List</a
                 >
