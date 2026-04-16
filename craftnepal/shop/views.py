@@ -68,3 +68,5 @@ def checkout(request):
         order.save()
 
     return render(request, "shop/checkout.html")
+
+

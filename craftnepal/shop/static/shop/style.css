@@ -1,8 +1,13 @@
-.card-text{
+.card-text {
   color: green;
   font-weight: 800;
 }
 
-.card-title{
+.card-title {
   font-weight: 900;
+}
+
+.asteriskField {
+  color: red;
+  margin-left: 5px;
 }
