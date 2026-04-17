@@ -23,7 +23,7 @@ def register(request):
     return render(request, "user/register.html", context)
 
 
-def login(request):
+def login_user(request):
     if request.method == "POST":
         form = LoginForm(request.POST)
 
@@ -32,6 +32,10 @@ def login(request):
             user = authenticate(request,username=data['username'], password=data['password'])
 
             if user is not None:
+              login(request, user)
+              if user.is_staff:
+                return redirect("/admins")
+              else:
                 return redirect("/")
             else:
                 messages.add_message(request, messages.ERROR, "Invalid Credentials")

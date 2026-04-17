@@ -1,7 +1,7 @@
 from django.contrib import admin
-from .models import Product, Order, Category
+from .models import *
 
-# Register your models here.
+
 admin.site.site_header = "Craft Nepal"
 admin.site.site_title = "Craft Nepal"
 admin.site.index_title = "Manage Craft Nepal"
@@ -27,7 +27,7 @@ class ProductAdmin(admin.ModelAdmin):
     actions = ("change_category_to_default",)
     list_editable = ("category","price","discount_price")
 
-
+# Register your models here.
 admin.site.register(Product, ProductAdmin)
 admin.site.register(Order)
 admin.site.register(Category)
