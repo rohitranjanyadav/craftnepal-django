@@ -6,6 +6,7 @@ from django.core.paginator import Paginator
 # Create your views here.
 def index(request):
     product_objects = Product.objects.all()
+    
     hero_images = list(
         Product.objects.exclude(image__isnull=True)
         .exclude(image__exact="")
