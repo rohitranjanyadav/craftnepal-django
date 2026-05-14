@@ -33,13 +33,13 @@ class Order(models.Model):
     PAYMENT_METHOD = (
         ('Cash On Delivery', 'Cash On Delivery'),
         ('Esewa', 'Esewa'),
-        ('Khalti', 'Khalti'),
     )
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     total_price = models.IntegerField()
     quantity = models.IntegerField(default=1)
     payment_method = models.CharField(choices=PAYMENT_METHOD,max_length=200)
     payment_status = models.CharField(default="Pending",max_length=200)
+    transaction_uuid = models.CharField(max_length=100, blank=True, null=True, db_index=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     contact_no = models.CharField(max_length=200)
     address = models.CharField(max_length=200)

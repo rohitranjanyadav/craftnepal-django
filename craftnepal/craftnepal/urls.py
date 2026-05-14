@@ -24,6 +24,9 @@ urlpatterns = [
     path("", views.index, name="index"),
     path("<int:id>/", views.detail, name="detail"),
     path("checkout/", views.checkout, name="checkout"),
+    path("payment/success/<str:uid>/", views.payment_success, name="payment_success"),
+    path("payment/failure/<str:uid>/", views.payment_failure, name="payment_failure"),
+    path("myorder/", views.myorder, name="myorder"),
     path("admins/", include("adminpage.urls")),
     path("auth/",include("user.urls")),
 ]
